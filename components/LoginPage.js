@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+    color: 'black',
   },
   inputContainer: {
     marginBottom: 16,
@@ -95,12 +96,14 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
     fontWeight: 'bold',
+    color: 'black',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
     padding: 12,
+    color: 'black',
   },
   link: {
     color: 'blue',
@@ -116,7 +119,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonText: {
-    color: 'white',
+    color: 'black',
     fontWeight: 'bold',
   },
   signupContainer: {

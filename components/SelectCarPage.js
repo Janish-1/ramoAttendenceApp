@@ -39,12 +39,6 @@ const SelectCarPage = () => {
         }
     };
 
-    // Function to change the request link for the local IPv4 address
-    const handleChangeRequestLink = () => {
-        // You may want to add input validation and handle securely
-        fetchip(localIpRequestLink);
-    };
-
     // Function to fetch data using the provided link
     const fetchip = async (link) => {
         try {
@@ -59,34 +53,51 @@ const SelectCarPage = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const userId = await AsyncStorage.getItem('user_id');
-                if (userId) {
-                    const userResponse = await fetch(`http://lsdrivebackend.ramo.co.in/api/driver/${userId}`);
-                    if (!userResponse.ok) {
-                        throw new Error(`HTTP error! Status: ${userResponse.status}`);
-                    }
-                    const userData = await userResponse.json();
-                    setUsername(userData.username);
-                    setProfileImage(userData.profileimage);
-                } else {
-                    console.error('User ID not found in AsyncStorage');
+    // Function to refresh data
+    const fetchData = async () => {
+        try {
+            const userId = await AsyncStorage.getItem('user_id');
+            if (userId) {
+                const userResponse = await fetch(`http://lsdrivebackend.ramo.co.in/api/driver/${userId}`);
+                if (!userResponse.ok) {
+                    throw new Error(`HTTP error! Status: ${userResponse.status}`);
                 }
-            } catch (error) {
-                console.error('Error fetching user data:', error);
+                const userData = await userResponse.json();
+                setUsername(userData.username);
+                setProfileImage(userData.profileimage);
+            } else {
+                console.error('User ID not found in AsyncStorage');
             }
-        };
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchData();
         fetchNetworkInfo();
         fetchPublicIP();
+        fetchip(localIpRequestLink);
 
         const ipInterval = setInterval(() => fetchip(localIpRequestLink), 1000);
 
+        // Clear the interval when the component unmounts
         return () => clearInterval(ipInterval);
     }, [localIpRequestLink]);
+
+    // Function to change the request link for the local IPv4 address
+    const handleChangeRequestLink = () => {
+        // You may want to add input validation and handle securely
+        fetchip(localIpRequestLink);
+    };
+
+    // Function to refresh data
+    const handleRefresh = () => {
+        fetchData();
+        fetchNetworkInfo();
+        fetchPublicIP();
+        fetchip(localIpRequestLink);
+    };
 
     return (
         <View style={styles.container}>
@@ -104,7 +115,12 @@ const SelectCarPage = () => {
                     value={localIpRequestLink}
                     onChangeText={(text) => setLocalIpRequestLink(text)}
                 />
-                <Button title="Change Link" onPress={handleChangeRequestLink} />
+                <Button title="Change Link" style={styles.button} onPress={handleChangeRequestLink} />
+            </View>
+
+            {/* Add the refresh button */}
+            <View style={styles.inputContainer}>
+                <Button title="Refresh Data" style={styles.button} onPress={handleRefresh} />
             </View>
         </View>
     );
@@ -130,7 +146,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 10,
         paddingHorizontal: 10,
+        color: 'black',
     },
+    button: {
+        color:'black',
+    }
 });
 
 export default SelectCarPage;
